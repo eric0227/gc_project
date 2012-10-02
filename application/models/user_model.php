@@ -3,8 +3,12 @@
 require_once(APPPATH . '/core/abstract_model.php');
 
 class User_model extends Abstract_model {
-	public static $PRIMARY_KEY = 'id_user';
-	public static $TABLE_NAME = 'gc_user';
+	public static function get_primary_key() {
+		return 'id_user';
+	}	
+	public static function get_table_name() {
+		return 'gc_user';
+	}
 	
 	function __construct($data = array()) {
 		parent::__construct($data);

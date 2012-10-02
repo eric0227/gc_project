@@ -36,19 +36,15 @@ abstract class Abstract_model {
 	}
 	
 	// get primary key
-	public function get_primary_key(){
-		return $PRIMARY_KEY;
-	}
+	public abstract static function get_primary_key();		
 	
 	// get primary value
 	public function get_primary_value(){
-		return $this->get_value($PRIMARY_KEY);
+		return $this->get_value($this->get_primary_key());
 	}
 	
 	// get table name
-	public function get_table_name(){
-		return $TABLE_NAME;
-	}
+	public abstract static function get_table_name();
 	
 	public function check_vaild_all() {		
 		return true;
@@ -89,7 +85,9 @@ abstract class Abstract_model {
 		$fields = &$this->get_fields();
 		
 		foreach($fields as $name => $field){
-			$values[$name] = $field['value'];
+			if(isset($field['value'])) {
+				$values[$name] = $field['value'];
+			}
 		}
 		return $values;		
 	}

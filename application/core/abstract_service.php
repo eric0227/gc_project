@@ -7,10 +7,11 @@ abstract class Abstract_service {
 	}
 	
 	// save
-	public function save($model){
-		$primary_value = $model->get_primary_value();
+	public function save(&$model){
+		//print_r($model);
+		echo $model->get_primary_value();		 
 		
-		if(empty($model->$primary_key)){
+		if($model->get_primary_value()){
 			return $this->insert($model);
 		} else {
 			return $this->update($model);
@@ -18,7 +19,7 @@ abstract class Abstract_service {
 	}
 	
 	// insert
-	public function insert($model){
+	public function insert(&$model){
 		$table_name = $model->get_table_name();		
 		$data = $model->get_values();
 				
@@ -30,8 +31,8 @@ abstract class Abstract_service {
 	public function update($model){		
 		$table_name = $model->get_table_name();		
 		$data = $model->get_values();		
-		$primary_key = $this->get_primary_key();
-		$primary_value = $this->get_primary_value();
+		$primary_key = $model->get_primary_key();
+		$primary_value = $model->get_primary_value();
 		
 		$this->db->where($primary_key, $primary_value);				
 		$this->db->update($table_name, $data);
@@ -47,13 +48,17 @@ abstract class Abstract_service {
 		$this->db->delete($table_name);
 	}
 	
-	public function get($model_name, $id){		
-		$this->db->where($model_name::$PRIMARY_KEY, $id);
-		$row = $this->db->get($model_name::$TABLE_NAME)->row_array();
+	public function get($model_name, $id){
+		$primary_key = call_user_func(array($model_name, 'get_primary_key'));
+		$table_name = call_user_func(array($model_name, 'get_primary_key'));
+		
+		$this->db->where($primary_key, $id);
+		$row = $this->db->get($table_name)->row_array();
 	
-		return $model_name::create_model($row);
+		return call_user_func_array(array($model_name, 'create_model'), $row);		
+		//return $model_name::create_model($row);
 	}
-
+	
 	public function find_row($model){
 		$table_name = $model->get_table_name();		
 		$data = $model.get_values();
@@ -63,7 +68,8 @@ abstract class Abstract_service {
 		
 		$class = get_class($model);
 		
-		return $class::create_model($row);
+		return call_user_func_array(array($model_name, 'create_model'), $row);
+		//return $class::create_model($row);
 	}
 	
 	public function find($model){
@@ -77,16 +83,16 @@ abstract class Abstract_service {
 		$class = get_class($model);
 		
 		foreach ($this->db->get($table_name)->result_array() as $row)
-		{
-			$models[] = $class::create_model($row);			
+		{			
+			$models[] = call_user_func_array(array($model_name, 'create_model'), $row);
+			//$models[] = $class::create_model($row);			
 		}
 		return $models;
-	}
-		
+	}		
 	// get latest data
 	public function get_latest($model){
-		$table_name = $this->get_table_name();
-		$primary_key = $this->get_primary_key();
+		$table_name = $model->get_table_name();
+		$primary_key = $model->get_primary_key();
 		
 		$this->db->order_by($primary_key, 'desc');
 		$row = $this->db->get($table_name)->row_array();
