@@ -3,23 +3,23 @@
 abstract class Abstract_model {
 	
 	// construct
-	public function __construct($data = array()){
+	public function __construct($data = array()){		
 		if(empty($data)){
 			return;
 		}
 		
 		$fields = &$this->get_fields();
 		
-		foreach($data as $name => $value){
-			if(isset($fields[$name])){
-				$fields[$name]['value'] = $value;
-			}
+		foreach($fields as $id => &$field) {			
+			if(!empty($data[$id])) {
+				$field['value'] = $data[$id];
+			}				
 		}
 	}
 	
 	// get fields
 	public abstract function &get_fields();
-		
+	
 	public function &get_field($name) {
 		$fields = &$this->get_fields();
 		

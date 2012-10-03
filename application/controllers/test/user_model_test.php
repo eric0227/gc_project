@@ -39,6 +39,7 @@ class User_model_test extends Toast
 			
 		$this->_assert_true($id_field['update'], 'ok');
 		$this->message = print_r($id_field, true);
+		
 	}
 	
 	function test_set_field() {
@@ -52,7 +53,7 @@ class User_model_test extends Toast
 	
 	function makeDumyUser() {
 		return array(
-			'id' => 1,
+			'id_user' => 1,
 			'user_id' => 'admin',
 			'password' => '1234',
 			'first_name' => 'first name ',

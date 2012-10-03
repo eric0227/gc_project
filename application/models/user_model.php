@@ -13,7 +13,7 @@ class User_model extends Abstract_model {
 	function __construct($data = array()) {
 		parent::__construct($data);
 	}
-					
+	
 	protected $fields = array(
 		'id_user'	=> array('label' => 'UserId', 'type' => 'string', 'mandatory' => true, 'length' => 32),
 		'password'	=> array('label' => 'Password', 'type' => 'password', 'mandatory' => true, 'length' => 32, 'encrypt' => true),
@@ -28,6 +28,7 @@ class User_model extends Abstract_model {
 	}
 	
 	public static function create_model($data) {
-		return new User_model($data);
+		$user = new User_model($data);
+		return $user;
 	}
 }
