@@ -80,7 +80,7 @@
 		<div id="logPanel">
 			<div id="logtitle">
 				Logs
-				<img src="./images/chat_plus.png" alt="" id="logFlag" />
+				<img src="/gc_project/images/chat_plus.png" alt="" id="logFlag" />
 			</div>
 						
 			<div style="clear:both;"></div>

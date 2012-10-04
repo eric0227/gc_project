@@ -2,7 +2,7 @@
 
 require_once(APPPATH . '/core/abstract_controller.php');
 
-class Controller_test extends Abstract_controller
+class Ajax_test extends Abstract_controller
 {
 	private $page = '/test.php';
 	
@@ -14,20 +14,23 @@ class Controller_test extends Abstract_controller
 	}
 	
 	public function test($params = array()) {
-		log_message('debug','test..');
-		
 		$this->data['method'] = 'test';
 	}
-		
+	
 	public function pre_process($params) {
-		log_message('debug','pre_process');
+	
 	}
 	
 	public function post_process($params) {
-		log_message('debug','post_process');
+		log_message('debug', '$this->output =>' . $this->output );
 		
-		$this->data['params'] = $params;
-		echo $this->load->view($this->page, $this->data, true);
+		$this->data['params'] = $params;		
+		if($this->output == 'html') {
+			$this->load->view('' . $this->page, $this->data, false);
+		}
+		if($this->output == 'json') {
+			echo json_encode($this->data);
+		}
 	}
 }
 

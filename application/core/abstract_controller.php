@@ -12,6 +12,9 @@
 		protected $lefterData = array();
 		protected $righterData = array();
 		protected $footerData = array();
+		
+		protected $ajax = false;
+		protected $output = 'html'; // html, json
 
 		function __construct(){
 			parent::__construct();
@@ -48,36 +51,61 @@
 
 		public function _remap($method, $params = array())
 		{
+			if($_REQUEST['ajax'] == '1') {
+				$this->ajax = 1;
+			} else {
+				$this->ajax = 0;
+			}
+			
+			if($_REQUEST['output'] == 'json') {
+				$this->output = 'json';
+			} else {
+				$this->output = 'html';
+			}
+			
+			log_message('debug','ajax =>'. $this->ajax);
+			log_message('debug','output =>'. $this->output);
 			log_message('debug', '$method : '. $method);
 			log_message('debug', '$params : '. print_r($params, true));
 			
-			$this->headerData['method'] = $method;
-			$this->headerData['params'] = $params;
-			
-			$this->header_process($params);
-			$this->lefter_process($params);
-					
+			if($this->ajax == 0) {
+				$this->headerData['method'] = $method;
+				$this->headerData['params'] = $params;
+				
+				log_message('debug', 'before header_process');
+				
+				$this->header_process($params);
+				
+				log_message('debug', 'header_process');
+				
+				$this->lefter_process($params);
+				
+				log_message('debug', 'lefter_process');
+			}
+
 			$this->pre_process($params);	
 			if (method_exists($this, $method)) {
 				call_user_func_array(array($this, $method), $params);
-			}    
+			}
 			$this->post_process($params);
 			
-			$this->righter_process($params);
-			$this->footer_process($params);
+			if($this->ajax == 0) {
+				$this->righter_process($params);
+				$this->footer_process($params);
+			}
 		}
 		
 		public function header_process($params) {
-			return $this->load->view('layout/' . $this->layout->hedaer, $this->headerData, false);
+			echo $this->load->view('layout/' . $this->layout->hedaer, $this->headerData, true);
 		}
 		public function lefter_process($params) {
-			return $this->load->view('layout/' . $this->layout->lefter, $this->lefterData, false);
+			echo $this->load->view('layout/' . $this->layout->lefter, $this->lefterData, true);
 		}
 		public function righter_process($params) {
-			return $this->load->view('layout/' . $this->layout->righter, $this->righterData, false);
+			echo $this->load->view('layout/' . $this->layout->righter, $this->righterData, true);
 		}
 		public function footer_process($params) {
-			return $this->load->view('layout/' . $this->layout->footer, $this->footerData, false);
+			echo $this->load->view('layout/' . $this->layout->footer, $this->footerData, true);
 		}
 		
 		public abstract function pre_process($params);
